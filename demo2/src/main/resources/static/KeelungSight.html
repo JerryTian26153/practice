@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>基隆景點</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loader > span {
+            background: black;
+            border-radius: 50%;
+            margin: 5rem 0.5rem;
+            animation: bouncingLoader 0.6s infinite alternate;
+        }
+        .loader > span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .loader > span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        .loader > span:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        @keyframes bouncingLoader {
+            from {
+                width: 0.1rem;
+                height: 0.1rem;
+                opacity: 1;
+                transform: translate3d(0);
+            }
+            to {
+                width: 1rem;
+                height: 1rem;
+                opacity: 0.4;
+                transform: translate3d(0, -1rem, 0);
+            }
+        }
+        button.zone{
+            position: relative;
+            width: 80px;
+            transition: width 0.6s;
+        }
+        button.zone:hover {
+            width: 100px;
+        }
+        div.card{
+            animation-name: btnAni1;
+            animation-duration: 1.5s;
+            animation-iteration-count: 1;
+            animation-direction: normal;
+            animation-fill-mode: both;
+        }
+        @keyframes btnAni1 {
+            0%   { opacity: 0}
+            100% { opacity: 1}
+        }
+        /*@keyframes example {
+            0%   { width:80px;height:auto;}
+            100% { width:120px;height:auto;}
+        }*/
+    </style>
+
+</head>
+<body>
+
+<div id="board" class="jumbotron text-center">
+    <h1 class="title">基隆景點</h1>
+    <!--<p>Resize this responsive page to see the effect!</p>-->
+    <button id="b0" type="button" class="btn btn-outline-primary zone">七堵區</button>
+    <button id="b1" type ="button" class="btn btn-outline-secondary zone">中山區</button>
+    <button id="b2" type ="button" class="btn btn-outline-success zone">中正區</button>
+    <button id="b3" type ="button" class="btn btn-outline-info zone">仁愛區</button>
+    <button id="b4" type ="button" class="btn btn-outline-warning zone">安樂區</button>
+    <button id="b5" type ="button" class="btn btn-outline-danger zone">信義區</button>
+    <button id="b6" type ="button" class="btn btn-outline-dark zone">暖暖區</button>
+</div>
+
+<div class="container">
+
+
+
+</div>
+<div id="SightCard" class="row">
+</div>
+</body>
+<script>
+    var parent = document.getElementById("SightCard");
+    //var loaderDiv = document.getElementsByClassName("loader");
+    var i=0;
+    var selectZone;
+
+    /*$(document).ready(function () {
+        $(".map").onmouseenter(function () {
+            console.log(10);
+            //$("button.zone").setAttribute("","");
+        })
+        /*$("#board").onmouseleave(function () {
+
+        })
+    });*/
+    $(document).ready(function () { //按鈕動畫-變灰
+
+        $("button.zone").click(function () {
+            parent.innerHTML="";
+            let loaderDiv = document.createElement("div");
+            loaderDiv.setAttribute("class", "loader col col-12 col-sm-12 col-md-12 col-lg-12");
+            parent.appendChild(loaderDiv);
+
+            let loaderSpan1 = document.createElement("span");
+            loaderDiv.appendChild(loaderSpan1);
+
+            let loaderSpan2 = document.createElement("span");
+            loaderDiv.appendChild(loaderSpan2);
+
+            let loaderSpan3 = document.createElement("span");
+            loaderDiv.appendChild(loaderSpan3);
+
+            let loaderSpan4 = document.createElement("span");
+            loaderDiv.appendChild(loaderSpan4);
+
+            $.getJSON("http://localhost:8080/SightAPI?zone="+(this).innerText, function(result){
+                //loaderDiv.innerHTML="";
+                selectZone=(this).innerHTML;
+                newJson = result;
+                parent.innerHTML="";
+                //console.log(newJson);
+                for(i=0;i<newJson.length;i++){
+                    //console.log(newJson[i]);
+                    /*let selectZone = (this).innerText;
+                    console.log((this).innerText);*/
+
+                    let div1 = document.createElement("div");
+                    div1.setAttribute("class", "col col-12 col-sm-12 col-md-6 col-lg-4 ");
+                    parent.appendChild(div1);
+
+                    let div2 = document.createElement("div");
+                    div2.setAttribute("class", "card ");
+                   //div2.setAttribute("style", "width:480px;")
+                    div1.appendChild(div2);
+
+                    let div3 = document.createElement("div");
+                    div3.setAttribute("class", "card-body");
+                    div2.appendChild(div3);
+
+                    let hTags = document.createElement("h3");
+                    hTags.setAttribute("class", "card-title text-center");
+                    hTags.innerHTML = newJson[i]["sightName"];
+                    div3.appendChild(hTags);
+
+                    let pTags = document.createElement("h4");
+                    pTags.setAttribute("class", "card-text text-center");
+                    pTags.innerHTML = newJson[i]["category"];
+                    div3.appendChild(pTags);
+
+                    let buttonTags = document.createElement("button");
+                    buttonTags.setAttribute("type", "button");
+                    buttonTags.setAttribute("class", "btn btn-primary");
+                    buttonTags.setAttribute("data-toggle", "collapse");
+                    buttonTags.setAttribute("data-target", "#sight"+i);
+
+                    let addressTags = document.createElement("p");
+                    addressTags.setAttribute("class", "card-text text-center");
+                    //addressTags.setAttribute("style", "float:right; display:none;")
+                    addressTags.innerHTML = newJson[i]["address"];
+                    div3.appendChild(addressTags);
+
+                    buttonTags.innerHTML = "詳細資料";
+                    div3.appendChild(buttonTags);
+
+                    let aTags = document.createElement("a");
+                    aTags.setAttribute("href", newJson[i]["address_href"]);
+                    aTags.setAttribute("class", "addressButton");
+                    aTags.setAttribute("target", "_blank");
+                    div3.appendChild(aTags);
+
+
+
+                    let mapButtonTags = document.createElement("button");
+                    mapButtonTags.setAttribute("type", "button");
+                    mapButtonTags.setAttribute("class", "btn btn-success map");
+                    mapButtonTags.setAttribute("style", "float:right;")
+                    //mapButtonTags.setAttribute("href", newJson[i]["address_href"]);
+                    mapButtonTags.innerHTML = "地圖";
+                    aTags.appendChild(mapButtonTags);
+
+                    let div4 = document.createElement("div");
+                    div4.setAttribute("class", "collapse");
+                    div4.setAttribute("id" , "sight"+i);
+                    div4.innerHTML = newJson[i]["description"];
+                    div3.appendChild(div4);
+
+                    let imgTags = document.createElement("img");
+                    imgTags.setAttribute("alt", "Card image");
+                    imgTags.setAttribute("src", newJson[i]["photoURL"]);
+                    imgTags.setAttribute("style", "width:100%;")
+                    imgTags.setAttribute("data-toggle", "collapse");
+                    imgTags.setAttribute("data-target", "#sight"+"1");
+                    div4.appendChild(imgTags);
+
+                    /*$(".map").on(function () {
+                        console.log(10);
+                    })*/
+                }
+            });
+            //i=0;
+            //parent.removeChild();
+
+        });
+    });
+
+</script>
+</html>
